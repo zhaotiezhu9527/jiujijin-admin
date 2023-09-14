@@ -125,12 +125,12 @@
       </el-table-column>
       <el-table-column align="center" width="180">
         <template slot="header">
-          <div>工作</div>
           <div>生日</div>
+          <div>工作</div>
         </template>
         <template slot-scope="scope">
-          <div>{{scope.row.work || "-"}}</div>
           <div>{{scope.row.birth || "-"}}</div>
+          <div>{{scope.row.work || "-"}}</div>
         </template>
       </el-table-column>
       <el-table-column label="地址" align="center" prop="bankName" width="300">

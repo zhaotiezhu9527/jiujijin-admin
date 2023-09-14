@@ -10,22 +10,36 @@
         />
       </el-form-item>
       <el-form-item label="任务" prop="rwId">
-        <el-input
-          v-model="queryParams.rwId"
-          placeholder="请输入任务"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.rwId" placeholder="请选择任务" clearable>
+          <el-option
+            v-for="dict in taskList"
+            :key="dict.value"
+            :label="dict.name"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
           <el-option
-            v-for="dict in dict.type.sys_normal_disable"
+            v-for="dict in statusList"
             :key="dict.value"
-            :label="dict.label"
+            :label="dict.name"
             :value="dict.value"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="时间" prop="registerTime">
+        <el-date-picker
+          v-model="dateRange"
+          style="width: 340px"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          type="datetimerange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :picker-options="pickerOptions"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -79,36 +93,30 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="opinionList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
+    <el-table v-loading="loading" :data="opinionList">
+      <!-- <el-table-column label="id" align="center" prop="id" /> -->
       <el-table-column label="用户名" align="center" prop="userName" />
       <el-table-column label="任务" align="center" prop="rwId" />
-      <el-table-column label="状态" align="center" prop="status">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
-        </template>
-      </el-table-column>
       <el-table-column label="申请时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ scope.row.createTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="审核时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ scope.row.modifyTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <el-tag type="warning" v-if="scope.row.status === 0">待审核</el-tag>
+          <el-tag type="success" v-else-if="scope.row.status === 1">审核通过</el-tag>
+          <el-tag type="danger" v-else-if="scope.row.status === 2">未通过</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['business:opinion:edit']"
-          >修改</el-button>
           <el-button
             size="mini"
             type="text"
@@ -116,6 +124,20 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['business:opinion:remove']"
           >删除</el-button>
+          <el-button
+            size="small"
+            type="primary"
+            @click="examineSub(scope.row,1)"
+            v-hasPermi="['business:opinion:edit']"
+            v-if="scope.row.status === 0"
+          >通过</el-button>
+          <el-button
+            size="small"
+            type="danger"
+            @click="examineSub(scope.row,2)"
+            v-hasPermi="['business:opinion:edit']"
+            v-if="scope.row.status === 0"
+          >驳回</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -140,9 +162,9 @@
         <el-form-item label="状态" prop="status">
           <el-select v-model="form.status" placeholder="请选择状态">
             <el-option
-              v-for="dict in dict.type.sys_normal_disable"
+              v-for="dict in statusList"
               :key="dict.value"
-              :label="dict.label"
+              :label="dict.name"
               :value="parseInt(dict.value)"
             ></el-option>
           </el-select>
@@ -198,8 +220,8 @@ export default {
         pageNum: 1,
         pageSize: 10,
         userName: null,
-        rwId: null,
-        status: null,
+        rwId: "",
+        status: "",
       },
       // 表单参数
       form: {},
@@ -211,7 +233,80 @@ export default {
         status: [
           { required: true, message: "状态不能为空", trigger: "change" }
         ],
-      }
+      },
+      statusList: [
+        {
+          name: '全部',
+          value: ""
+        },
+        {
+          name: '审核通过',
+          value: 1
+        },
+        {
+          name: '待审核',
+          value: 0
+        },
+        {
+          name: '未通过',
+          value: 2
+        },
+      ],
+      taskList: [
+        {
+          name: '全部',
+          value: ""
+        },
+        {
+          name: '1号任务',
+          value: 1
+        },
+        {
+          name: '2号任务',
+          value: 2
+        },
+        {
+          name: '3号任务',
+          value: 3
+        },
+        {
+          name: '4号任务',
+          value: 4
+        },
+        {
+          name: '5号任务',
+          value: 5
+        },
+      ],
+      // 时间
+      dateRange:[],
+      pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
+      },
     };
   },
   created() {
@@ -221,7 +316,7 @@ export default {
     /** 查询救济金申请列表 */
     getList() {
       this.loading = true;
-      listOpinion(this.queryParams).then(response => {
+      listOpinion(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
         this.opinionList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -254,12 +349,6 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
       this.handleQuery();
-    },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -312,6 +401,19 @@ export default {
       this.download('business/opinion/export', {
         ...this.queryParams
       }, `opinion_${new Date().getTime()}.xlsx`)
+    },
+    // 提现审核
+    examineSub(row,status){
+      const ids = row.id || this.ids;
+      this.$modal.confirm('是否确认操作？').then(function() {
+        return updateOpinion({
+          id : row.id,
+          status : status
+        });
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("操作成功");
+      }).catch(() => {});
     }
   }
 };
