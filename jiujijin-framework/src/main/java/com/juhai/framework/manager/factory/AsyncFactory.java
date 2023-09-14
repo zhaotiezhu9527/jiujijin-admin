@@ -1,6 +1,8 @@
 package com.juhai.framework.manager.factory;
 
 import java.util.TimerTask;
+
+import cn.hutool.extra.servlet.ServletUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.juhai.common.constant.Constants;
@@ -15,6 +17,10 @@ import com.juhai.system.domain.SysOperLog;
 import com.juhai.system.service.ISysLogininforService;
 import com.juhai.system.service.ISysOperLogService;
 import eu.bitwalker.useragentutils.UserAgent;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 异步工厂（产生任务用）
@@ -38,7 +44,9 @@ public class AsyncFactory
             final Object... args)
     {
         final UserAgent userAgent = UserAgent.parseUserAgentString(ServletUtils.getRequest().getHeader("User-Agent"));
-        final String ip = IpUtils.getIpAddr();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//        final String ip = IpUtils.getIpAddr();
+        final String ip = ServletUtil.getClientIPByHeader(request, "x-original-forwarded-for");
         return new TimerTask()
         {
             @Override
