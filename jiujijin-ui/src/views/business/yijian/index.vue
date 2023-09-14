@@ -27,7 +27,7 @@
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
+        <!-- <el-button
           type="success"
           plain
           icon="el-icon-edit"
@@ -35,7 +35,7 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['business:yijian:edit']"
-        >修改</el-button>
+        >修改</el-button> -->
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -61,20 +61,20 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="yijianList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+    <el-table v-loading="loading" :data="yijianList">
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="用户名" align="center" prop="userName" />
       <el-table-column label="意见" align="center" prop="content" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
+          <!-- <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['business:yijian:edit']"
-          >修改</el-button>
+          >修改</el-button> -->
           <el-button
             size="mini"
             type="text"
@@ -190,12 +190,6 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
       this.handleQuery();
-    },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
