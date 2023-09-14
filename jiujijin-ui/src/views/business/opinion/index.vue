@@ -9,10 +9,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="邮箱" prop="email">
+      <el-form-item label="任务" prop="rwId">
         <el-input
-          v-model="queryParams.email"
-          placeholder="请输入邮箱"
+          v-model="queryParams.rwId"
+          placeholder="请输入任务"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -41,7 +41,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['business:user:add']"
+          v-hasPermi="['business:opinion:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -52,7 +52,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['business:user:edit']"
+          v-hasPermi="['business:opinion:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -63,7 +63,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['business:user:remove']"
+          v-hasPermi="['business:opinion:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -73,53 +73,33 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['business:user:export']"
+          v-hasPermi="['business:opinion:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="opinionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="用户ID" align="center" prop="id" />
+      <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="用户名" align="center" prop="userName" />
-      <el-table-column label="姓名" align="center" prop="realName" />
-      <el-table-column label="邮箱" align="center" prop="email" />
-      <el-table-column label="性别" align="center" prop="gender">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_user_sex" :value="scope.row.gender"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="国籍" align="center" prop="nationality" />
-      <el-table-column label="生日" align="center" prop="birth" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.birth, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="身份证/护照" align="center" prop="idCard" />
-      <el-table-column label="工作" align="center" prop="work" />
-      <el-table-column label="省/市" align="center" prop="city" />
-      <el-table-column label="地区" align="center" prop="region" />
-      <el-table-column label="详细地址" align="center" prop="address" />
-      <el-table-column label="银行名称" align="center" prop="bankName" />
-      <el-table-column label="银行卡号" align="center" prop="bankCard" />
+      <el-table-column label="任务" align="center" prop="rwId" />
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="注册时间" align="center" prop="registerTime" width="180">
+      <el-table-column label="申请时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.registerTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="注册Ip" align="center" prop="registerIp" />
-      <el-table-column label="上次登录时间" align="center" prop="lastTime" width="180">
+      <el-table-column label="审核时间" align="center" prop="modifyTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.lastTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.modifyTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="上次登录IP" align="center" prop="lastIp" />
+      <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -127,14 +107,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['business:user:edit']"
+            v-hasPermi="['business:opinion:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['business:user:remove']"
+            v-hasPermi="['business:opinion:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -148,62 +128,14 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改用户列表对话框 -->
+    <!-- 添加或修改救济金申请对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="用户名" prop="userName">
           <el-input v-model="form.userName" placeholder="请输入用户名" />
         </el-form-item>
-        <el-form-item label="姓名" prop="realName">
-          <el-input v-model="form.realName" placeholder="请输入姓名" />
-        </el-form-item>
-        <el-form-item label="登录密码" prop="loginPwd">
-          <el-input v-model="form.loginPwd" placeholder="请输入登录密码" />
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="form.email" placeholder="请输入邮箱" />
-        </el-form-item>
-        <el-form-item label="性别" prop="gender">
-          <el-select v-model="form.gender" placeholder="请选择性别">
-            <el-option
-              v-for="dict in dict.type.sys_user_sex"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="国籍" prop="nationality">
-          <el-input v-model="form.nationality" placeholder="请输入国籍" />
-        </el-form-item>
-        <el-form-item label="生日" prop="birth">
-          <el-date-picker clearable
-            v-model="form.birth"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择生日">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="身份证/护照" prop="idCard">
-          <el-input v-model="form.idCard" placeholder="请输入身份证/护照" />
-        </el-form-item>
-        <el-form-item label="工作" prop="work">
-          <el-input v-model="form.work" placeholder="请输入工作" />
-        </el-form-item>
-        <el-form-item label="省/市" prop="city">
-          <el-input v-model="form.city" placeholder="请输入省/市" />
-        </el-form-item>
-        <el-form-item label="地区" prop="region">
-          <el-input v-model="form.region" placeholder="请输入地区" />
-        </el-form-item>
-        <el-form-item label="详细地址" prop="address">
-          <el-input v-model="form.address" placeholder="请输入详细地址" />
-        </el-form-item>
-        <el-form-item label="银行名称" prop="bankName">
-          <el-input v-model="form.bankName" placeholder="请输入银行名称" />
-        </el-form-item>
-        <el-form-item label="银行卡号" prop="bankCard">
-          <el-input v-model="form.bankCard" placeholder="请输入银行卡号" />
+        <el-form-item label="任务" prop="rwId">
+          <el-input v-model="form.rwId" placeholder="请输入任务" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-select v-model="form.status" placeholder="请选择状态">
@@ -215,35 +147,16 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="注册时间" prop="registerTime">
-          <el-date-picker clearable
-            v-model="form.registerTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择注册时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="注册Ip" prop="registerIp">
-          <el-input v-model="form.registerIp" placeholder="请输入注册Ip" />
-        </el-form-item>
-        <el-form-item label="上次登录时间" prop="lastTime">
-          <el-date-picker clearable
-            v-model="form.lastTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择上次登录时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="上次登录IP" prop="lastIp">
-          <el-input v-model="form.lastIp" placeholder="请输入上次登录IP" />
-        </el-form-item>
-        <el-form-item label="最后修改时间" prop="modifyTime">
+        <el-form-item label="审核时间" prop="modifyTime">
           <el-date-picker clearable
             v-model="form.modifyTime"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="请选择最后修改时间">
+            placeholder="请选择审核时间">
           </el-date-picker>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -255,11 +168,11 @@
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser } from "@/api/business/user";
+import { listOpinion, getOpinion, delOpinion, addOpinion, updateOpinion } from "@/api/business/opinion";
 
 export default {
-  name: "User",
-  dicts: ['sys_user_sex', 'sys_normal_disable'],
+  name: "Opinion",
+  dicts: ['sys_normal_disable'],
   data() {
     return {
       // 遮罩层
@@ -274,8 +187,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 用户列表表格数据
-      userList: [],
+      // 救济金申请表格数据
+      opinionList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -285,13 +198,19 @@ export default {
         pageNum: 1,
         pageSize: 10,
         userName: null,
-        email: null,
+        rwId: null,
         status: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
+        userName: [
+          { required: true, message: "用户名不能为空", trigger: "blur" }
+        ],
+        status: [
+          { required: true, message: "状态不能为空", trigger: "change" }
+        ],
       }
     };
   },
@@ -299,11 +218,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询用户列表列表 */
+    /** 查询救济金申请列表 */
     getList() {
       this.loading = true;
-      listUser(this.queryParams).then(response => {
-        this.userList = response.rows;
+      listOpinion(this.queryParams).then(response => {
+        this.opinionList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -318,25 +237,11 @@ export default {
       this.form = {
         id: null,
         userName: null,
-        realName: null,
-        loginPwd: null,
-        email: null,
-        gender: null,
-        nationality: null,
-        birth: null,
-        idCard: null,
-        work: null,
-        city: null,
-        region: null,
-        address: null,
-        bankName: null,
-        bankCard: null,
+        rwId: null,
         status: null,
-        registerTime: null,
-        registerIp: null,
-        lastTime: null,
-        lastIp: null,
-        modifyTime: null
+        createTime: null,
+        modifyTime: null,
+        remark: null
       };
       this.resetForm("form");
     },
@@ -360,16 +265,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加用户列表";
+      this.title = "添加救济金申请";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getUser(id).then(response => {
+      getOpinion(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改用户列表";
+        this.title = "修改救济金申请";
       });
     },
     /** 提交按钮 */
@@ -377,13 +282,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateUser(this.form).then(response => {
+            updateOpinion(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addUser(this.form).then(response => {
+            addOpinion(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -395,8 +300,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除用户列表编号为"' + ids + '"的数据项？').then(function() {
-        return delUser(ids);
+      this.$modal.confirm('是否确认删除救济金申请编号为"' + ids + '"的数据项？').then(function() {
+        return delOpinion(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -404,9 +309,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('business/user/export', {
+      this.download('business/opinion/export', {
         ...this.queryParams
-      }, `user_${new Date().getTime()}.xlsx`)
+      }, `opinion_${new Date().getTime()}.xlsx`)
     }
   }
 };
