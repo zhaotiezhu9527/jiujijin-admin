@@ -3,13 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>yuenan</artifactId>
+        <artifactId>jiujijin</artifactId>
         <groupId>com.juhai</groupId>
         <version>3.8.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <artifactId>yuenan-admin</artifactId>
+    <artifactId>jiujijin-admin</artifactId>
     <version>1.0.5</version>
     <description>
         web服务入口
@@ -46,25 +46,25 @@
         <!-- 核心模块-->
         <dependency>
             <groupId>com.juhai</groupId>
-            <artifactId>yuenan-framework</artifactId>
+            <artifactId>jiujijin-framework</artifactId>
         </dependency>
 
         <!-- 定时任务-->
         <dependency>
             <groupId>com.juhai</groupId>
-            <artifactId>yuenan-quartz</artifactId>
+            <artifactId>jiujijin-quartz</artifactId>
         </dependency>
 
         <!-- 代码生成-->
         <dependency>
             <groupId>com.juhai</groupId>
-            <artifactId>yuenan-generator</artifactId>
+            <artifactId>jiujijin-generator</artifactId>
         </dependency>
 
         <!-- 业务代码-->
         <dependency>
             <groupId>com.juhai</groupId>
-            <artifactId>yuenan-business</artifactId>
+            <artifactId>jiujijin-business</artifactId>
         </dependency>
 
         <dependency>

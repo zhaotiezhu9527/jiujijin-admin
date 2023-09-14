@@ -3,13 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>yuenan</artifactId>
+        <artifactId>jiujijin</artifactId>
         <groupId>com.juhai</groupId>
         <version>3.8.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>yuenan-framework</artifactId>
+    <artifactId>jiujijin-framework</artifactId>
 
     <description>
         framework框架核心
@@ -56,7 +56,7 @@
         <!-- 系统模块-->
         <dependency>
             <groupId>com.juhai</groupId>
-            <artifactId>yuenan-system</artifactId>
+            <artifactId>jiujijin-system</artifactId>
         </dependency>
 
     </dependencies>

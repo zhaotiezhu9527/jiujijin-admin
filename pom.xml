@@ -5,15 +5,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	
     <groupId>com.juhai</groupId>
-    <artifactId>yuenan</artifactId>
+    <artifactId>jiujijin</artifactId>
     <version>3.8.5</version>
 
-    <name>yuenan</name>
+    <name>jiujijin</name>
     <url>http://www.ruoyi.vip</url>
     <description>后台管理系统</description>
     
     <properties>
-        <yuenan.version>3.8.5</yuenan.version>
+        <jiujijin.version>3.8.5</jiujijin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
@@ -139,43 +139,43 @@
             <!-- 定时任务-->
             <dependency>
                 <groupId>com.juhai</groupId>
-                <artifactId>yuenan-quartz</artifactId>
-                <version>${yuenan.version}</version>
+                <artifactId>jiujijin-quartz</artifactId>
+                <version>${jiujijin.version}</version>
             </dependency>
 
             <!-- 代码生成-->
             <dependency>
                 <groupId>com.juhai</groupId>
-                <artifactId>yuenan-generator</artifactId>
-                <version>${yuenan.version}</version>
+                <artifactId>jiujijin-generator</artifactId>
+                <version>${jiujijin.version}</version>
             </dependency>
 
             <!-- 核心模块-->
             <dependency>
                 <groupId>com.juhai</groupId>
-                <artifactId>yuenan-framework</artifactId>
-                <version>${yuenan.version}</version>
+                <artifactId>jiujijin-framework</artifactId>
+                <version>${jiujijin.version}</version>
             </dependency>
 
             <!-- 系统模块-->
             <dependency>
                 <groupId>com.juhai</groupId>
-                <artifactId>yuenan-system</artifactId>
-                <version>${yuenan.version}</version>
+                <artifactId>jiujijin-system</artifactId>
+                <version>${jiujijin.version}</version>
             </dependency>
 
             <!-- 通用工具-->
             <dependency>
                 <groupId>com.juhai</groupId>
-                <artifactId>yuenan-common</artifactId>
-                <version>${yuenan.version}</version>
+                <artifactId>jiujijin-common</artifactId>
+                <version>${jiujijin.version}</version>
             </dependency>
 
             <!-- 通用工具-->
             <dependency>
                 <groupId>com.juhai</groupId>
-                <artifactId>yuenan-business</artifactId>
-                <version>${yuenan.version}</version>
+                <artifactId>jiujijin-business</artifactId>
+                <version>${jiujijin.version}</version>
             </dependency>
 
             <dependency>
@@ -198,13 +198,13 @@
     </dependencyManagement>
 
     <modules>
-        <module>yuenan-admin</module>
-        <module>yuenan-framework</module>
-        <module>yuenan-system</module>
-        <module>yuenan-quartz</module>
-        <module>yuenan-generator</module>
-        <module>yuenan-common</module>
-        <module>yuenan-business</module>
+        <module>jiujijin-admin</module>
+        <module>jiujijin-framework</module>
+        <module>jiujijin-system</module>
+        <module>jiujijin-quartz</module>
+        <module>jiujijin-generator</module>
+        <module>jiujijin-common</module>
+        <module>jiujijin-business</module>
     </modules>
     <packaging>pom</packaging>
 
