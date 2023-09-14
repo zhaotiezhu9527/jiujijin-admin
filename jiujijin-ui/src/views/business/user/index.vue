@@ -133,7 +133,7 @@
           <div>{{scope.row.work || "-"}}</div>
         </template>
       </el-table-column>
-      <el-table-column label="地址" align="center" prop="bankName" width="300">
+      <el-table-column label="地址" prop="bankName" width="300">
         <template slot-scope="scope">
           <div>省/市：{{scope.row.city || "-"}}</div>
           <div>区：{{scope.row.region || "-"}}</div>
